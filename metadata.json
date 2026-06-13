@@ -1,0 +1,6 @@
+{
+  "name": "GlowLogic",
+  "description": "ثورة العناية بالبشرة المدعومة بالذكاء الاصطناعي بواسطة زبيدة رمزي لتحليل البشرة واقتراح روتين العناية المناسب وتتبع روتين العناية اليومية.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    
+    <!-- Shadow drop -->
+    <path
+        android:pathData="M54,27 C45,41.5 36,49.5 36,63 C36,73 44,81 54,81 C64,81 72,73 72,63 C72,49.5 63,41.5 54,27 Z"
+        android:fillColor="#33000000" />
+
+    <!-- Main Gold Luxury Droplet -->
+    <path
+        android:pathData="M54,25 C45,39.5 36,47.5 36,61 C36,71 44,79 54,79 C64,79 72,71 72,61 C72,47.5 63,39.5 54,25 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="36"
+                android:startY="25"
+                android:endX="72"
+                android:endY="79"
+                android:type="linear">
+                <item android:offset="0" android:color="#FFF1D0" />
+                <item android:offset="0.4" android:color="#DDB26F" />
+                <item android:offset="1" android:color="#966C32" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Inner Glow drop curve shadow -->
+    <path
+        android:pathData="M42,61 C42,54 48,46 54,37"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000" />
+
+    <!-- Core Luxury Beauty Sparkle Top Right (Star) -->
+    <path
+        android:pathData="M73,26 L75,30 L79,32 L75,34 L73,38 L71,34 L67,32 L71,30 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="67"
+                android:startY="26"
+                android:endX="79"
+                android:endY="38"
+                android:type="linear">
+                <item android:offset="0" android:color="#FFFFFF" />
+                <item android:offset="1" android:color="#FCEED4" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Small Sparkle Bottom Left -->
+    <path
+        android:pathData="M37,68 L38.2,70.5 L40.7,71.7 L38.2,72.9 L37,75.4 L35.8,72.9 L33.3,71.7 L35.8,70.5 Z"
+        android:fillColor="#F0DDB2" />
+        
+    <!-- Glowing Accent Star in Center-Right -->
+    <path
+        android:pathData="M66,50 L67,52 L69,52.5 L67,53 L66,55 L65,53 L63,52.5 L65,52 Z"
+        android:fillColor="#FFFFFF" />
+
+</vector>

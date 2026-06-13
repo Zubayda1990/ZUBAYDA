@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GlowLogic - Advanced Clinical AI Skincare</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@1,700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navyRegal: '#0A192F',
+                        navyDeep: '#0d223f',
+                        clinicalAzure: '#007BFF',
+                        clinicalHover: '#0056b3',
+                        sterileWhite: '#FFFFFF',
+                        clinicalGray: '#F8F9FA'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8F9FA;
+            background-image: radial-gradient(circle at top right, rgba(0, 123, 255, 0.04), transparent 500px);
+        }
+        .gradient-footer-text {
+            background: linear-gradient(135deg, #0A192F 30%, #007BFF 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .bilingual-rtl {
+            direction: rtl;
+        }
+        
+        /* Entrance animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .animate-scale-in {
+            animation: scaleIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between overflow-x-hidden antialiased text-navyRegal">
+
+    <!-- Top Navigation Header -->
+    <header class="bg-navyRegal text-white shadow-lg sticky top-0 z-50 transition-all duration-300 border-b border-white/5">
+        <div class="max-w-4xl mx-auto px-5 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3 group cursor-pointer" onclick="resetApp()">
+                <div class="bg-clinicalAzure/15 p-2 rounded-xl transition group-hover:bg-clinicalAzure/25">
+                    <i class="fa-solid fa-microscope text-clinicalAzure text-xl animate-pulse"></i>
+                </div>
+                <h1 class="text-xl font-extrabold tracking-wide text-white flex items-center">
+                    Glow<span class="text-clinicalAzure">Logic</span>
+                </h1>
+            </div>
+            
+            <button id="langToggle" onclick="toggleLanguage()" class="relative text-xs font-bold border border-white/20 hover:border-clinicalAzure px-4 py-2 rounded-full hover:bg-white hover:text-navyRegal transition duration-300 shadow-sm flex items-center gap-2">
+                <i class="fa-solid fa-globe text-clinicalAzure"></i>
+                <span id="langBtnText">العربية (AR)</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-4xl mx-auto px-5 py-6 flex-grow w-full flex flex-col gap-6">
+        
+        <!-- Step Indicator & Progress HUD -->
+        <section class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+            <div class="flex justify-between items-center mb-2">
+                <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-clinicalAzure animate-ping"></span>
+                    <span id="wizardStepLabel" class="text-xs font-bold tracking-wider text-clinicalAzure uppercase">Step 1 of 4: Environment Profile</span>
+                </div>
+                <span id="wizardPercentLabel" class="text-xs text-slate-400 font-bold">25% Complete</span>
+            </div>
+            <div class="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
+                <div id="progressBar" class="bg-clinicalAzure h-full rounded-full transition-all duration-500 ease-out" style="width: 25%"></div>
+            </div>
+        </section>
+
+        <!-- Progressive Consultation View Wizard Card -->
+        <section id="wizardCard" class="bg-white p-6 rounded-2xl shadow-md border border-slate-100 relative overflow-hidden transition-all duration-300 min-h-[380px] flex flex-col justify-between">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-clinicalAzure/5 rounded-full filter blur-xl pointer-events-none"></div>
+            
+            <div>
+                <!-- STEP 1: ENVIRONMENTAL Profile -->
+                <div id="stepContainer1" class="transition-all duration-350 space-y-4">
+                    <div class="text-left" id="step1Header">
+                        <h2 class="text-navyRegal font-extrabold text-base tracking-wide flex items-center gap-2">
+                            <i class="fa-solid fa-cloud-sun text-clinicalAzure"></i>
+                            <span>GEO-ENVIRONMENTAL CLIMATE FACTOR</span>
+                        </h2>
+                        <p class="text-gray-400 text-xs mt-0.5">Atmospheric data automatically regulates delivery weight index & humectant rates.</p>
+                    </div>
+
+                    <!-- City Selection Grid -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 pt-2">
+                        <div onclick="selectCity(0)" id="cityCard0" class="border-2 rounded-xl p-3 cursor-pointer transition-all hover:scale-[1.02] text-center active:scale-95 bg-white border-slate-150">
+                            <span class="text-lg block mb-1">🇮🇶</span>
+                            <span class="text-xs font-bold block" id="cityLabel0">Baghdad</span>
+                        </div>
+                        <div onclick="selectCity(1)" id="cityCard1" class="border-2 rounded-xl p-3 cursor-pointer transition-all hover:scale-[1.02] text-center active:scale-95 bg-white border-slate-150">
+                            <span class="text-lg block mb-1">🇯🇴</span>
+                            <span class="text-xs font-bold block" id="cityLabel1">Amman</span>
+                        </div>
+                        <div onclick="selectCity(2)" id="cityCard2" class="border-2 rounded-xl p-3 cursor-pointer transition-all hover:scale-[1.02] text-center active:scale-95 bg-white border-slate-150">
+                            <span class="text-lg block mb-1">🇰🇷</span>
+                            <span class="text-xs font-bold block" id="cityLabel2">Seoul</span>
+                        </div>
+                        <div onclick="selectCity(3)" id="cityCard3" class="border-2 rounded-xl p-3 cursor-pointer transition-all hover:scale-[1.02] text-center active:scale-95 bg-white border-slate-150">
+                            <span class="text-lg block mb-1">🇬🇧</span>
+                            <span class="text-xs font-bold block" id="cityLabel3">London</span>
+                        </div>
+                    </div>
+
+                    <!-- Environment Metrics Displays -->
+                    <div class="grid grid-cols-2 gap-4 pt-2">
+                        <div class="bg-clinicalGray p-3 rounded-xl border border-gray-150 flex items-center gap-3">
+                            <i class="fa-solid fa-temperature-three-quarters text-red-500 text-lg"></i>
+                            <div>
+                                <span class="text-[9px] text-gray-400 block font-bold" id="hudTempLabel">OUTDOOR TEMP</span>
+                                <span id="hudTempVal" class="text-navyRegal font-bold text-xs">28°C / 82.4°F</span>
+                            </div>
+                        </div>
+                        <div class="bg-clinicalGray p-3 rounded-xl border border-gray-150 flex items-center gap-3">
+                            <i class="fa-solid fa-droplet text-clinicalAzure text-lg"></i>
+                            <div>
+                                <span class="text-[9px] text-gray-400 block font-bold" id="hudHumidityLabel">HUMIDITY INDEX</span>
+                                <span id="hudHumidityVal" class="text-navyRegal font-bold text-xs">45% RH</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Environment Dynamic AI speech bubble -->
+                    <div class="bg-blue-50/50 p-3 rounded-xl border border-blue-100/60 flex items-start gap-2.5">
+                        <i class="fa-solid fa-shield-virus text-clinicalAzure text-sm mt-0.5 animate-pulse"></i>
+                        <span id="envAiBubbleText" class="text-xs text-navyRegal font-medium leading-relaxed">
+                            "High humidity context: Formulating hyper-lightweight gel toner logic."
+                        </span>
+                    </div>
+                </div>
+
+                <!-- STEP 2: SKIN BIOMETRICS (pH, Porphyrins, Melanin) -->
+                <div id="stepContainer2" class="hidden transition-all duration-350 space-y-4">
+                    <div class="text-left" id="step2Header">
+                        <h2 class="text-navyRegal font-extrabold text-base tracking-wide flex items-center gap-2">
+                            <i class="fa-solid fa-dna text-clinicalAzure"></i>
+                            <span>EPIDERMAL BIOMETRIC CALIBRATION</span>
+                        </h2>
+                        <p class="text-gray-400 text-xs mt-0.5">Configure precise skin telemetry to regulate targeted ingredients formulation matrix.</p>
+                    </div>
+
+                    <div class="space-y-4">
+                        <!-- pH Slider -->
+                        <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-100">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-xs font-bold text-slate-700" id="phTitleLabel">Acid Mantle pH Level</span>
+                                <div id="phStatusBadge" class="text-[10px] uppercase font-black px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700">Acidic (Optimal)</div>
+                            </div>
+                            <input type="range" id="phSlider" min="4.0" max="7.5" step="0.1" value="5.5" oninput="bindPHValue(this.value)" class="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-clinicalAzure">
+                            <div class="flex justify-between text-[10px] text-slate-400 font-bold mt-1">
+                                <span>4.0 (Ideal Acidic)</span>
+                                <span class="text-navyRegal text-xs font-bold" id="currentPHDisplay">Active: 5.5 pH</span>
+                                <span>7.5 (Alkaline Barrier Damage)</span>
+                            </div>
+                        </div>
+
+                        <!-- Melanin & Porphyrins Selectors -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="space-y-1">
+                                <label class="text-[10px] text-slate-400 font-black uppercase" id="melaninSelectLabel">Melanin Density</label>
+                                <select id="melaninSelect" onchange="bindMelaninValue(this.value)" class="w-full text-xs font-bold bg-white border border-slate-200 p-2 rounded-xl text-navyRegal">
+                                    <option value="Standard" selected>Standard Melanin (Uniform)</option>
+                                    <option value="High">High Density (Post-Inflammatory Spots)</option>
+                                    <option value="Melasma">Melasma / Hyperpigmentation Risk</option>
+                                </select>
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="text-[10px] text-slate-400 font-black uppercase" id="porphyriaSelectLabel">Microbacterial Porphyrins</label>
+                                <select id="porphyrinSelect" onchange="bindPorphyrinValue(this.value)" class="w-full text-xs font-bold bg-white border border-slate-200 p-2 rounded-xl text-navyRegal">
+                                    <option value="Low">Low Risk (Mantle Safe)</option>
+                                    <option value="Moderate">Moderate (Mild congestion)</option>
+                                    <option value="High" selected>High Risk (Active bacteria cluster)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 3: BAUMANN CLINICAL SCREEN -->
+                <div id="stepContainer3" class="hidden transition-all duration-350 space-y-4">
+                    <div class="text-left" id="step3Header">
+                        <h2 class="text-navyRegal font-extrabold text-base tracking-wide flex items-center gap-2">
+                            <i class="fa-solid fa-hospital-user text-clinicalAzure"></i>
+                            <span>BAUMANN CLINICAL SCREENING</span>
+                        </h2>
+                        <p class="text-gray-400 text-xs mt-0.5">Answering standard diagnostic queries unlocks cellular classification score.</p>
+                    </div>
+
+                    <!-- Individual Question Progressive Display -->
+                    <div class="border border-slate-100 rounded-2xl p-4 bg-slate-50/50 space-y-3 min-h-[180px] flex flex-col justify-between" id="baumannQuestionCard">
+                        <div>
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-[10px] text-clinicalAzure font-extrabold uppercase tracking-widest" id="baumannCategoryBadge">Hydration Core (D vs O)</span>
+                                <span class="text-[10px] text-slate-400 font-bold" id="baumannProgressIndicator">Question 1 of 4</span>
+                            </div>
+                            <h3 id="baumannQuestionText" class="text-xs font-bold text-navyRegal leading-relaxed">How does your skin feel 2 hours after washing with a neutral cleanser?</h3>
+                        </div>
+
+                        <!-- Answer Choice Cards -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2" id="baumannOptionsContainer">
+                            <!-- Populated with JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 4: SMART BESPOKE FORMULATION RESULTS -->
+                <div id="stepContainer4" class="hidden transition-all duration-350 space-y-4">
+                    <div class="text-left" id="step4Header">
+                        <h2 class="text-navyRegal font-extrabold text-base tracking-wide flex items-center gap-2">
+                            <i class="fa-solid fa-prescription-bottle-medical text-clinicalAzure"></i>
+                            <span id="diagnosticResultTitle">CUSTOM FORMULATION ANALYSIS</span>
+                        </h2>
+                        <p class="text-gray-400 text-xs mt-0.5" id="diagnosticResultSub">Click the button below to generate and compute your personalized medical report.</p>
+                    </div>
+
+                    <!-- Action Trigger -->
+                    <div id="generateActionArea" class="flex flex-col items-center justify-center py-6 text-center space-y-3 bg-slate-50/80 rounded-2xl border border-dashed border-slate-200">
+                        <i class="fa-solid fa-gears text-3xl text-clinicalAzure animate-spin"></i>
+                        <h3 id="readyLabel" class="text-xs font-bold text-navyRegal">Biological Inputs Synthesized Successfully!</h3>
+                        <p id="readyDesc" class="text-[10px] text-slate-400 px-6 font-semibold">Your Geo-environmental factors, pH mantle level, skin biometrics, and Baumann clinical metrics have been verified by GlowLogic V4 Engine.</p>
+                        
+                        <!-- Smart Trigger Button -->
+                        <button onclick="computeBespokeRecipe()" id="bespokeBttn" class="bg-clinicalAzure hover:bg-clinicalHover text-white text-xs font-black px-6 py-3 rounded-xl transition duration-300 shadow-md transform hover:scale-[1.02] active:scale-95 flex items-center gap-2">
+                            <i class="fa-solid fa-signature"></i>
+                            <span id="computeBtnText">Generate Personalized Clinical Recipe</span>
+                        </button>
+                    </div>
+
+                    <!-- Dynamic Report Area (Initially Hidden) -->
+                    <div id="dynamicReportContent" class="hidden space-y-4 animate-scale-in">
+                        <!-- Skin Type Header Card -->
+                        <div class="bg-navyRegal text-white p-4 rounded-xl flex justify-between items-center">
+                            <div>
+                                <span class="text-[9px] uppercase tracking-widest text-clinicalAzure font-black block" id="skinTypeReportHeader">Skin Classification Result</span>
+                                <h3 class="text-lg font-black tracking-widest text-white mt-0.5" id="skinTypeCode">DSNW</h3>
+                                <p class="text-[10px] text-slate-300 font-bold" id="skinTypeTitle">Dry, Sensitive, Non-pigmented, Wrinkled</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-[9px] uppercase tracking-widest text-emerald-400 font-black block" id="formulaMantleLabel">Acid Mantle Rebalancing</span>
+                                <strong class="text-slate-100 text-xs" id="mantlepHResult">5.5 pH Optimal Match</strong>
+                            </div>
+                        </div>
+
+                        <!-- Active Ingredient Recipe Matrix Table -->
+                        <div class="border border-slate-150 rounded-xl overflow-hidden text-[10px] shadow-sm">
+                            <div class="bg-slate-100 text-slate-700 p-2.5 flex justify-between font-bold">
+                                <span id="tblColIngredient">ACTIVE COMPLEX CORES</span>
+                                <span id="tblColPercent">PERCENTAGE</span>
+                                <span id="tblColTarget">BIOLOGICAL TARGET LEVEL</span>
+                            </div>
+                            <div class="bg-white" id="recipeTableRows">
+                                <!-- Populated dynamically -->
+                            </div>
+                            <div class="p-2 bg-amber-50/60 flex justify-between border-t border-slate-150">
+                                <strong class="text-rose-600" id="tblExclusionLabel">• Phenoxyethanol & Arbutin</strong>
+                                <span class="text-rose-600 font-bold">0.0%</span>
+                                <span class="text-rose-600 font-bold" id="tblExclusionRole">Strictly Excluded (Anti-Allergen)</span>
+                            </div>
+                        </div>
+
+                        <!-- Scientific Doctor Insight Statement -->
+                        <div class="p-3 bg-blue-50/50 rounded-xl border border-blue-100/40 text-navyRegal text-[10px] leading-relaxed">
+                            <strong class="text-xs block mb-1 text-clinicalAzure" id="clinicalInsightHeader"><i class="fa-solid fa-clipboard-user mr-1"></i> Targeted Biosphere Formulation Notes:</strong>
+                            <p id="clinicalInsightBody" class="font-medium text-slate-700">Dynamic recipe notes go here...</p>
+                        </div>
+
+                        <!-- Action Controls: Narrator and Reset -->
+                        <div class="flex items-center gap-3 pt-1 border-t border-slate-100">
+                            <button id="audioReminderBtn" onclick="narrateRoutine()" class="text-xs font-bold bg-blue-50 hover:bg-blue-100 border border-blue-200 text-navyRegal px-4 py-2.5 rounded-xl transition duration-300 shadow-sm flex items-center gap-2 transform active:scale-95">
+                                <i class="fa-solid fa-volume-high text-clinicalAzure text-sm animate-bounce"></i>
+                                <span id="audioBtnText">Audio Routine Reminder</span>
+                            </button>
+                            <button onclick="resetApp()" class="text-xs font-bold border border-slate-200 text-slate-500 hover:text-navyRegal px-4 py-2.5 rounded-xl transition duration-300 flex items-center gap-2 transform active:scale-95">
+                                <i class="fa-solid fa-rotate-left"></i>
+                                <span id="resetAppBtnLabel">Start New Consultation</span>
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Wizard Bottom Actions Controller -->
+            <div class="flex justify-between items-center pt-5 border-t border-slate-100 mt-6" id="wizardControls">
+                <button onclick="navigateWizard(-1)" id="prevBtn" class="px-4 py-2 bg-white hover:bg-slate-50 text-slate-500 hover:text-navyRegal text-xs font-bold border border-slate-200 rounded-xl transition duration-300 opacity-50 cursor-not-allowed" disabled>
+                    <i class="fa-solid fa-chevron-left mr-1"></i> <span id="prevBtnLabel">Back</span>
+                </button>
+                <div class="flex gap-1.5" id="stepPillsContainer">
+                    <span class="w-2 h-2 rounded-full bg-clinicalAzure transition-all duration-300"></span>
+                    <span class="w-2 h-2 rounded-full bg-slate-200 transition-all duration-300"></span>
+                    <span class="w-2 h-2 rounded-full bg-slate-200 transition-all duration-300"></span>
+                    <span class="w-2 h-2 rounded-full bg-slate-200 transition-all duration-300"></span>
+                </div>
+                <button onclick="navigateWizard(1)" id="nextBtn" class="px-4 py-2 bg-clinicalAzure hover:bg-clinicalHover text-white text-xs font-bold rounded-xl transition duration-300 shadow-sm">
+                    <span id="nextBtnLabel">Next Step</span> <i class="fa-solid fa-chevron-right ml-1"></i>
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Project Watermark Strict Absolute Footer -->
+    <footer class="bg-white p-5 text-center border-t border-gray-100 shadow-inner z-50">
+        <div class="max-w-4xl mx-auto flex flex-col items-center justify-center gap-1">
+            <p class="text-xs font-extrabold tracking-wide">
+                <span id="foundedLabel" class="text-gray-400">Founded & Developed by:</span> 
+                <span class="gradient-footer-text text-sm ml-1 font-black">Zubayda Ramzi hasanain</span>
+            </p>
+            <p class="text-[9px] text-gray-400 font-bold tracking-widest mt-0.5 flex items-center gap-1">
+                <i class="fa-solid fa-shield-halved text-clinicalAzure"></i>
+                GLOWLOGIC SYSTEMS • CLINICAL SPECIFICATION MODEL V4
+            </p>
+        </div>
+    </footer>
+
+    <!-- Interactive JS Controller -->
+    <script>
+        // Interactive state machine variables
+        let currentLang = 'en';
+        let currentStep = 1;
+        
+        // Dynamic inputs binding variables
+        let selectedCityIndex = 0;
+        let sensorTemp = 28;
+        let sensorHumidity = 45;
+        let sensorUVIndex = 3;
+        
+        let skinPH = 5.5;
+        let skinMelanin = "Standard";
+        let skinPorphyrins = "High";
+        
+        let baumannAnswers = [null, null, null, null];
+        let currentBaumannIndex = 0;
+
+        // Static data pools
+        const cityData = [
+            { nameEn: "Baghdad MRC", nameAr: "مجمع بغداد الطبي", temp: 34, humidity: 30, uv: 9, insightEn: "Dry heat & UV spike: Incorporating natural UV barriers & increasing soothing lipid serum base.", insightAr: "حرارة مرتفعة وأشعة فوق بنفسجية حادة: حقن واقي فيزيائي مغلق وزيادة تركيز السيراميد لمنع التبخر الجلدي." },
+            { nameEn: "Amman Clinic District", nameAr: "مستوصف عمان الطبي", temp: 24, humidity: 40, uv: 5, insightEn: "Mild dry environment: Elevating natural moisturizing factor PCA-Na ratios for moisture retention.", insightAr: "بيئة معتدلة الجفاف: زيادة مركب PCA-Na الطبيعي للحفاظ على رطوبة الخلايا واستقرار الملاط الجلدي." },
+            { nameEn: "Seoul Biotech Square", nameAr: "مساحة سيول الحيوية", temp: 19, humidity: 65, uv: 3, insightEn: "Humid air: Adjusting formulas with micro-molecular hyaluronic acid to ensure pore weight minimization.", insightAr: "أجواء رطبة: تقليل ثقل الزيوت وتطبيق مواد هيدروجيل خفيفة الحجم لضمان تنفس النسيج المسامي." },
+            { nameEn: "London Derm Centre", nameAr: "معهد لندن للأدمة", temp: 12, humidity: 75, uv: 1, insightEn: "Cold damp air: Enhancing moisture barrier skin slip index to counter winter moisture-barrier cracking.", insightAr: "مناخ بارد ورطب: تعظيم ترطيب السطح الخارجي وتفادي تخرش حاجز الأدمة بفعل الجفاف البارد." }
+        ];
+
+        const baumannQuestions = [
+            {
+                categoryEn: "Hydration Balance (Dry vs. Oily)",
+                categoryAr: "توازن رطوبة البشرة (جافة ضد دهنية)",
+                qEn: "How does your skin feel 2 hours after washing with a standard neutral cleanser?",
+                qAr: "كيف تشعر بشرتك بعد مرور ساعتين من غسلها بمنظف طبيعي معتدل؟",
+                optionsEn: [
+                    { val: 1, text: "Tight, flaky, or visibly dry" },
+                    { val: 2, text: "Smooth and completely comfortable" },
+                    { val: 3, text: "Slightly shiny, especially the T-Zone" },
+                    { val: 4, text: "Highly oily or slick to the touch" }
+                ],
+                optionsAr: [
+                    { val: 1, text: "مشدودة، جافة، أو مغطاة بقشور طفيفة" },
+                    { val: 2, text: "ناعمة، مرنة، ومريحة تماماً" },
+                    { val: 3, text: "لامعة بعض الشيء خصوصاً منطقة الـ T-Zone" },
+                    { val: 4, text: "زيتية جداً أو دسمة عند ملامستها رطباً" }
+                ]
+            },
+            {
+                categoryEn: "Sensitivity Index (Sensitive vs. Resistant)",
+                categoryAr: "مؤشر التخرش والحساسية (حساسة ضد مقاومة)",
+                qEn: "Does your skin turn red, burn, or develop acne breakouts when introducing new cosmetics?",
+                qAr: "هل تعاني بشرتكِ من احمرار أو حرق أو تخرج بثور حب شباب عند استعمال منتجات جديدة؟",
+                optionsEn: [
+                    { val: 1, text: "Most of the time (Highly sensitive)" },
+                    { val: 2, text: "Occasionally / when applying scented creams" },
+                    { val: 3, text: "Rarely (Very safe skin index)" },
+                    { val: 4, text: "Never (Excellent barrier defense)" }
+                ],
+                optionsAr: [
+                    { val: 1, text: "في معظم الأحيان (حساسية مفرطة سريعة التخرش)" },
+                    { val: 2, text: "أحياناً / خصوصاً مع الكريمات العطرية" },
+                    { val: 3, text: "نادراً ما يحدث ذلك (الجلد مستقر جداً)" },
+                    { val: 4, text: "مستحيل تماماً (حاجز دفاعي متماسك)" }
+                ]
+            },
+            {
+                categoryEn: "Pigmentation Index (Pigmented vs. Non-pigmented)",
+                categoryAr: "شفرة التصبغات (مفرطة التلوّن ضد متفرقة الكلف)",
+                qEn: "How easily do phototoxic freckles or dark spots form after moderate sun exposure?",
+                qAr: "بأي سرعة تظهر التصبغات الجلدية، الكلف أو النمش بعد التعرض لضوء الشمس المباشر الخفيف؟",
+                optionsEn: [
+                    { val: 1, text: "Easily & dense clusters form quickly" },
+                    { val: 2, text: "Moderate localized dark marks form" },
+                    { val: 3, text: "Seldomly / spots fade very quickly" },
+                    { val: 4, text: "Never / skin remains extremely uniform" }
+                ],
+                optionsAr: [
+                    { val: 1, text: "بسرعة كبيرة وتتكون بقع داكنة مكثفة" },
+                    { val: 2, text: "تظهر بقع بؤرية متفرقة بشكل متوسط" },
+                    { val: 3, text: "قليلاً ما تظهر وتتلاشى تلقائياً بسرعة" },
+                    { val: 4, text: "لا تظهر إطلاقاً واللون متجانس كلياً" }
+                ]
+            },
+            {
+                categoryEn: "Elasticity Core (Wrinkled vs. Tight)",
+                categoryAr: "مستوى الهرم الخلوي والترهل (طيات الجلد ضد المشدود)",
+                qEn: "Under resting facial expressions, do you observe fine dehydration lines or wrinkles around the eyes?",
+                qAr: "تحت ظروف استرخاء عضلات الوجه، هل تلاحظين وجود خطوط دقيقة أو تجاعيد حول العينين؟",
+                optionsEn: [
+                    { val: 1, text: "Deep visible lines already established" },
+                    { val: 2, text: "Yes, brief dehydration lines visible" },
+                    { val: 3, text: "Barely prominent, robust elasticity" },
+                    { val: 4, text: "Flawless tight texture, completely plump" }
+                ],
+                optionsAr: [
+                    { val: 1, text: "تجاعيد عميقة واضحة للعين بالمشاهدة البسيطة" },
+                    { val: 2, text: "نعم، تظهر خطوط خفيفة جافة عند الابتسام" },
+                    { val: 3, text: "بالكاد تُلاحظ، مرونة الكولاجين قوية" },
+                    { val: 4, text: "بشرة مشدودة كلياً وممتلئة بالصحة والشباب" }
+                ]
+            }
+        ];
+
+        // Boot-up script
+        window.onload = () => {
+            selectCity(0);
+            updateWizardUI();
+            renderBaumannQuestion();
+        };
+
+        // Switch EN / AR
+        function toggleLanguage() {
+            currentLang = currentLang === 'en' ? 'ar' : 'en';
+            document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+            if (currentLang === 'ar') {
+                document.documentElement.classList.add('bilingual-rtl');
+            } else {
+                document.documentElement.classList.remove('bilingual-rtl');
+            }
+            
+            // Re-translate components
+            translateTexts();
+            updateWizardUI();
+            renderBaumannQuestion();
+            selectCity(selectedCityIndex); // Refresh environmental labels
+            
+            // Recompute recipe if it was already made
+            if (!document.getElementById('dynamicReportContent').classList.contains('hidden')) {
+                computeBespokeRecipe();
+            }
+        }
+
+        function translateTexts() {
+            const isEn = (currentLang === 'en');
+            document.getElementById('langBtnText').innerText = isEn ? "العربية (AR)" : "English (EN)";
+            
+            // Header Elements
+            document.getElementById('hudTempLabel').innerText = isEn ? "OUTDOOR TEMP" : "الحرارة الخارجية";
+            document.getElementById('hudHumidityLabel').innerText = isEn ? "HUMIDITY INDEX" : "مؤشر الرطوبة";
+            
+            // Step 2 Labels
+            document.getElementById('phTitleLabel').innerText = isEn ? "Acid Mantle pH Level" : "حموضة الطبقة القرنية (pH)";
+            document.getElementById('melaninSelectLabel').innerText = isEn ? "Melanin Density" : "كثافة الميلانين";
+            document.getElementById('porphyriaSelectLabel').innerText = isEn ? "Microbacterial Porphyrins" : "البورفيرين البكتيري المسبب للحبوب";
+            
+            // Step 2 selector options
+            const melenSelector = document.getElementById('melaninSelect');
+            melenSelector.options[0].text = isEn ? "Standard Melanin (Uniform)" : "توزيع ميلانين طبيعي متناسق";
+            melenSelector.options[1].text = isEn ? "High Density (Post-Inflammatory Spots)" : "كثافة عالية (بقع ما بعد التخرش)";
+            melenSelector.options[2].text = isEn ? "Melasma / Hyperpigmentation Risk" : "خطر كلف أو تصبغات بؤرية نشطة";
+            
+            const porphSelector = document.getElementById('porphyrinSelect');
+            porphSelector.options[0].text = isEn ? "Low Risk (Mantle Safe)" : "خطر ضئيل (الغطاء القرني آمن)";
+            porphSelector.options[1].text = isEn ? "Moderate (Mild congestion)" : "خطر متوسط (احتقان مسام خفيف)";
+            porphSelector.options[2].text = isEn ? "High Risk (Active bacteria cluster)" : "خطر مرتفع (نشاط بكتيري مسبب للرؤوس)";
+            
+            // Step 4 Buttons
+            document.getElementById('computeBtnText').innerText = isEn ? "Generate Personalized Clinical Recipe" : "حساب وهندسة التركيبة الذكية الدقيقة";
+            document.getElementById('readyLabel').innerText = isEn ? "Biological Inputs Synthesized Successfully!" : "تم تحصيل وفك شفرة البيانات الحيوية للبشرة!";
+            document.getElementById('readyDesc').innerText = isEn 
+                ? "Your Geo-environmental factors, pH mantle level, skin biometrics, and Baumann clinical metrics have been verified by GlowLogic V4 Engine." 
+                : "تمت مراجعة العوامل البيئية ونسبة الرطوبة ومؤشرات الـ pH المكتشفة مع موازنة شفرة استبيان باومان بنجاح.";
+
+            // Control Buttons
+            document.getElementById('prevBtnLabel').innerText = isEn ? "Back" : "السابق";
+            document.getElementById('nextBtnLabel').innerText = isEn ? "Next Step" : "الخطوة التالية";
+            document.getElementById('resetAppBtnLabel').innerText = isEn ? "Start New Consultation" : "استشارة جديدة مصفّرة";
+            
+            document.getElementById('foundedLabel').innerText = isEn ? "Founded & Developed by:" : "تأسيس وتطوير الدكتورة:";
+        }
+
+        // City Selector Dynamic Binding
+        function selectCity(index) {
+            selectedCityIndex = index;
+            const targetCity = cityData[index];
+            sensorTemp = targetCity.temp;
+            sensorHumidity = targetCity.humidity;
+            sensorUVIndex = targetCity.uv;
+
+            // Highlight active card
+            for (let i = 0; i < 4; i++) {
+                const card = document.getElementById(`cityCard` + i);
+                if (i === index) {
+                    card.classList.add('border-clinicalAzure', 'bg-blue-50/20');
+                    card.classList.remove('border-slate-150', 'bg-white');
+                } else {
+                    card.classList.remove('border-clinicalAzure', 'bg-blue-50/20');
+                    card.classList.add('border-slate-150', 'bg-white');
+                }
+            }
+
+            // Bind values directly to HUD and text
+            document.getElementById('hudTempVal').innerText = `${sensorTemp}°C / ${(sensorTemp*1.8 + 32).toFixed(1)}°F`;
+            document.getElementById('hudHumidityVal').innerText = `${sensorHumidity}% RH (${sensorHumidity > 60 ? (currentLang === 'en' ? 'Sticky' : 'رطبة جداً') : sensorHumidity < 40 ? (currentLang === 'en' ? 'Dry Air' : 'جفاف واضح') : (currentLang === 'en' ? 'Optimal' : 'معتدلة')})`;
+            
+            document.getElementById('envAiBubbleText').innerText = `"${currentLang === 'en' ? targetCity.insightEn : targetCity.insightAr}"`;
+        }
+
+        // pH values color codes
+        function bindPHValue(val) {
+            skinPH = parseFloat(val);
+            document.getElementById('currentPHDisplay').innerText = (currentLang === 'en') ? `Active: ${skinPH} pH` : `مستوى المقياس الحالي: ${skinPH} pH`;
+            const badge = document.getElementById('phStatusBadge');
+            
+            if (skinPH <= 5.5) {
+                badge.innerText = (currentLang === 'en') ? "Acidic (Optimal)" : "حمضي (حاجز مثالي)";
+                badge.className = "text-[10px] uppercase font-black px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700";
+            } else if (skinPH > 5.5 && skinPH < 6.5) {
+                badge.innerText = (currentLang === 'en') ? "Neutral (Vulnerable)" : "متعادل (دفاعات هشّة)";
+                badge.className = "text-[10px] uppercase font-black px-2 py-0.5 rounded-full bg-amber-100 text-amber-700";
+            } else {
+                badge.innerText = (currentLang === 'en') ? "Alkaline (High Infection Risk)" : "قلوي (تلف غطاء الحماية)";
+                badge.className = "text-[10px] uppercase font-black px-2 py-0.5 rounded-full bg-rose-100 text-rose-700";
+            }
+        }
+
+        function bindMelaninValue(val) {
+            skinMelanin = val;
+        }
+
+        function bindPorphyrinValue(val) {
+            skinPorphyrins = val;
+        }
+
+        // Step navigation logic
+        function navigateWizard(direction) {
+            const nextStep = currentStep + direction;
+            if (nextStep >= 1 && nextStep <= 4) {
+                // Ensure answers provided before letting step 3 bypass
+                if (currentStep === 3 && direction === 1 && baumannAnswers.includes(null)) {
+                    alert(currentLang === 'en' ? "Please complete all 4 clinical questions to calculate skin index." : "يرجى الإجابة على الأسئلة الأربعة كاملة لقياس نوع البشرة تشخيصياً.");
+                    return;
+                }
+                
+                currentStep = nextStep;
+                updateWizardUI();
+            }
+        }
+
+        function updateWizardUI() {
+            // Update Stepper Headers
+            const isEn = (currentLang === 'en');
+            const stepTitles = [
+                isEn ? "Step 1 of 4: Environment Profile" : "المرحلة الأولى: فحص البيئة والمناخ",
+                isEn ? "Step 2 of 4: Epidermal Biometrics" : "المرحلة الثانية: معايرة الاستشعار والـ pH",
+                isEn ? "Step 3 of 4: Baumann Screening" : "المرحلة الثالثة: استبيان باومان الطبي",
+                isEn ? "Step 4 of 4: Compute Custom Recipe" : "المرحلة الرابعة: تشييد هندسة التركيبة المخصصة"
+            ];
+            
+            document.getElementById('wizardStepLabel').innerText = stepTitles[currentStep - 1];
+            document.getElementById('wizardPercentLabel').innerText = `${currentStep * 25}% ` + (isEn ? "Complete" : "مكتمل");
+            document.getElementById('progressBar').style.width = `${currentStep * 25}%`;
+
+            // Toggle visibility of step container contents
+            for (let i = 1; i <= 4; i++) {
+                const stepDiv = document.getElementById(`stepContainer${i}`);
+                if (i === currentStep) {
+                    stepDiv.classList.remove('hidden');
+                    stepDiv.classList.add('animate-fade-in');
+                } else {
+                    stepDiv.classList.add('hidden');
+                }
+            }
+
+            // Navigation buttons states
+            const prevB = document.getElementById('prevBtn');
+            const nextB = document.getElementById('nextBtn');
+            
+            if (currentStep === 1) {
+                prevB.disabled = true;
+                prevB.classList.add('opacity-50', 'cursor-not-allowed');
+            } else {
+                prevB.disabled = false;
+                prevB.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+
+            if (currentStep === 4) {
+                nextB.classList.add('hidden');
+            } else {
+                nextB.classList.remove('hidden');
+            }
+
+            // Render navigation pills
+            const pillsContainer = document.getElementById('stepPillsContainer');
+            let pillsHtml = '';
+            for (let i = 1; i <= 4; i++) {
+                const activeColor = (i === currentStep) ? 'bg-clinicalAzure w-4' : 'bg-slate-200 w-2';
+                pillsHtml += `<span class="h-2 rounded-full transition-all duration-300 ${activeColor}"></span>`;
+            }
+            pillsContainer.innerHTML = pillsHtml;
+        }
+
+        // Baumann render
+        function renderBaumannQuestion() {
+            const isEn = (currentLang === 'en');
+            const qData = baumannQuestions[currentBaumannIndex];
+
+            // Categories
+            document.getElementById('baumannCategoryBadge').innerText = isEn ? qData.categoryEn : qData.categoryAr;
+            document.getElementById('baumannProgressIndicator').innerText = (isEn ? "Question " : "السؤال ") + `${currentBaumannIndex + 1} ` + (isEn ? "of 4" : "من 4");
+            document.getElementById('baumannQuestionText').innerText = isEn ? qData.qEn : qData.qAr;
+
+            // Render options
+            const optionsContainer = document.getElementById('baumannOptionsContainer');
+            optionsContainer.innerHTML = '';
+
+            const listOptions = isEn ? qData.optionsEn : qData.optionsAr;
+            listOptions.forEach((opt) => {
+                const isSelected = (baumannAnswers[currentBaumannIndex] === opt.val);
+                const activeClasses = isSelected ? 'border-clinicalAzure bg-blue-50/30 font-bold' : 'border-slate-100 hover:border-blue-300 hover:bg-slate-50 font-medium';
+                optionsContainer.innerHTML += `
+                    <div onclick="selectBaumannAnswer(${opt.val})" class="border-2 rounded-xl p-3 cursor-pointer text-xs transition duration-200 flex items-center gap-2 ${activeClasses}">
+                        <span class="w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center text-[10px] ${isSelected ? 'bg-clinicalAzure text-white border-clinicalAzure' : 'text-slate-400'}">
+                            ${isSelected ? '✓' : opt.val}
+                        </span>
+                        <span class="flex-grow text-navyRegal text-left ${currentLang === 'ar' ? 'text-right' : ''}">${opt.text}</span>
+                    </div>
+                `;
+            });
+        }
+
+        function selectBaumannAnswer(value) {
+            baumannAnswers[currentBaumannIndex] = value;
+            renderBaumannQuestion();
+
+            // After a small delay, slide to the next question automatically
+            setTimeout(() => {
+                if (currentBaumannIndex < 3) {
+                    currentBaumannIndex++;
+                    renderBaumannQuestion();
+                } else {
+                    // Reached end, automatically head to Step 4 results view
+                    currentStep = 4;
+                    updateWizardUI();
+                }
+            }, 300);
+        }
+
+        // SMART FORMULATION ENGINE
+        function computeBespokeRecipe() {
+            // Cancel any current narration
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+            }
+
+            // Step 1: Calculate Skin Type Code
+            const isEn = (currentLang === 'en');
+            const hydrationScore = baumannAnswers[0] || 2;
+            const sensitivityScore = baumannAnswers[1] || 2;
+            const pigmentationScore = baumannAnswers[2] || 2;
+            const elasticityScore = baumannAnswers[3] || 2;
+
+            const hyd = (hydrationScore >= 2.5) ? "O" : "D"; // Oily vs Dry
+            const sen = (sensitivityScore <= 2.5) ? "S" : "R"; // Sensitive vs Resistant
+            const pig = (pigmentationScore <= 2.5) ? "P" : "N"; // Pigmented vs Non-pigmented
+            const ela = (elasticityScore <= 2.5) ? "W" : "T"; // Wrinkled vs Tight
+
+            const skinCode = `${hyd}${sen}${pig}${ela}`;
+            
+            // Build dynamic text description
+            let codeTitleEn = "";
+            let codeTitleAr = "";
+            let doctorNoteEn = "";
+            let doctorNoteAr = "";
+
+            // Dry or Oily logic mapping
+            if (hyd === "O") {
+                codeTitleEn += "Oily";
+                codeTitleAr += "دهنية";
+            } else {
+                codeTitleEn += "Dry";
+                codeTitleAr += "جافة";
+            }
+
+            // Sensitive or Resistant mapped
+            if (sen === "S") {
+                codeTitleEn += ", Sensitive";
+                codeTitleAr += "، حساسة";
+            } else {
+                codeTitleEn += ", Resistant";
+                codeTitleAr += "، مقاومة";
+            }
+
+            // Pigmentation mapped
+            if (pig === "P") {
+                codeTitleEn += ", Pigmented";
+                codeTitleAr += "، مفرطة التصبغ";
+            } else {
+                codeTitleEn += ", Non-pigmented";
+                codeTitleAr += "، متجانسة كلياً";
+            }
+
+            // Elasticity mapped
+            if (ela === "W") {
+                codeTitleEn += ", Wrinkled";
+                codeTitleAr += "، مفرطة الخطوط";
+            } else {
+                codeTitleEn += ", Tight";
+                codeTitleAr += "، مشدودة مرنة";
+            }
+
+            // Calculate precise clinical values
+            // 1. EGCG Porphyrins Destructor
+            let egcgPct = 2.5;
+            if (skinPorphyrins === "High" || hyd === "O") {
+                egcgPct = 3.5;
+            } else if (skinPorphyrins === "Low") {
+                egcgPct = 1.5;
+            }
+
+            // 2. Adenosine wrinkle rebuilder
+            let adenosinePct = 2.5;
+            if (ela === "W") {
+                adenosinePct = 3.5;
+            } else {
+                adenosinePct = 1.5;
+            }
+
+            // 3. Natural Moisturizer (PCA-Na + Serine Complex)
+            let pmPct = 5.0;
+            if (hyd === "D") {
+                pmPct = 8.5; // significantly higher humectant rate for dry skin
+            } else if (sensorHumidity < 40) {
+                pmPct = 7.0; // adjust for dry environmental factors
+            }
+
+            // 4. Chelating Core & Glycosides Solubilizers
+            let glycosidePct = 7.0;
+            if (sensorHumidity > 60) {
+                glycosidePct = 5.0; // reduce solubilizers in sticky humid climates
+            }
+
+            // Render table dynamically
+            const tableRows = document.getElementById('recipeTableRows');
+            tableRows.innerHTML = `
+                <div class="p-2.5 flex justify-between border-b border-slate-50 bg-white hover:bg-slate-50 transition-all">
+                    <strong>• Epigallocatechin Gallate (EGCG)</strong>
+                    <span class="text-clinicalAzure font-bold">${egcgPct.toFixed(1)}%</span>
+                    <span class="text-gray-400">${isEn ? 'Epidermal Porphyrins Destruct' : 'تقويض كتل البورفيرين البكتيرية'}</span>
+                </div>
+                <div class="p-2.5 flex justify-between border-b border-slate-50 bg-white hover:bg-slate-50 transition-all">
+                    <strong>• Adenosine & Tripeptide-38</strong>
+                    <span class="text-clinicalAzure font-bold">${adenosinePct.toFixed(1)}%</span>
+                    <span class="text-gray-400">${isEn ? 'Dermal Collagen Stimulation' : 'تحفيز الكولاجين بالأدمة لسلامة الخلايا'}</span>
+                </div>
+                <div class="p-2.5 flex justify-between border-b border-slate-50 bg-white hover:bg-slate-50 transition-all">
+                    <strong>• Disodium EDTA (Chelating agent)</strong>
+                    <span class="text-clinicalAzure font-bold">0.2%</span>
+                    <span class="text-gray-400">${isEn ? 'Ionic Complex Binding stabilizer' : 'ربط أيونات المعادن للحفاظ على الصيغة'}</span>
+                </div>
+                <div class="p-2.5 flex justify-between border-b border-slate-50 bg-white hover:bg-slate-50 transition-all">
+                    <strong>• Glycoside PCA-Na & Serine Matrice</strong>
+                    <span class="text-clinicalAzure font-bold">${pmPct.toFixed(1)}%</span>
+                    <span class="text-gray-400">${isEn ? 'Biomimetic NMF Moisture Replenish' : 'تعويض عامل الترطيب الطبيعي لتجاوز الجفاف'}</span>
+                </div>
+                <div class="p-2.5 flex justify-between border-b border-slate-50 bg-white hover:bg-slate-50 transition-all">
+                    <strong>• Mild Caprylyl / Cloud Solubilizer</strong>
+                    <span class="text-clinicalAzure font-bold">${glycosidePct.toFixed(1)}%</span>
+                    <span class="text-gray-400">${isEn ? 'Micellar Interfacial Cleansing Slip' : 'ربط الزيوت والمستخلصات بطريقة مائية خالية من اللزوجة'}</span>
+                </div>
+            `;
+
+            // Dynamic scientific comments
+            if (sen === "S") {
+                doctorNoteEn = `Mantle rebalancing critical. Due to your highly sensitive skin barrier index, we have excluded Phenoxyethanol preservative, replacing it with a biomimetic preservation matrix. High concentration of soothing amino acids is loaded to inhibit surface redness.`;
+                doctorNoteAr = `توازن الطبقة الدفاعية هام ومحوري. نتيجة لخصائص الحساسية المكتشفة، تم تصفير مركبات مادة الفينوكسي إيتانول تماماً واستخدام مواد طبيعية حافظة، مع زيادة بروتينات مهدئة تفادياً لتهيج الأدمة ولرأب الاحمرار الجلدي.`;
+            } else {
+                doctorNoteEn = `Robust resilient barrier detected. The formula reinforces the epidermis cellular lipid cement, enabling active molecular absorption without inflammatory risk. Maintain continuous protective skin slip levels under current environmental factors.`;
+                doctorNoteAr = `تم فحص متانة حاجز بشرتك بنجاح وتبين أنها عالية ومقاومة. تدعم هذه الصياغة تسريع تجديد الخلايا ورفع كفاءة النفوذية الخلوية دون خوف من تهيجات السطح الخارجي.`;
+            }
+
+            doctorNoteEn += ` Additionally, adjusting pH to counteract your current measured epidermal acidity of ${skinPH}.`;
+            doctorNoteAr += ` بالإضافة إلى ضبط معدلات كيمياء السائل ليتوافق مع مقياس حموضة بشرتك الحالية بمقدار ${skinPH}.`;
+
+            // Display values in HTML
+            document.getElementById('skinTypeCode').innerText = skinCode + " - " + (isEn ? "WEEK 4" : "الأسبوع 4");
+            document.getElementById('skinTypeTitle').innerText = isEn ? codeTitleEn : codeTitleAr;
+            document.getElementById('mantlepHResult').innerText = `${skinPH} pH (Mantle index: ` + (skinPH <= 5.5 ? (isEn ? "Healthy" : "آمن") : (isEn ? "Vulnerable" : "تالف")) + `)`;
+            document.getElementById('clinicalInsightBody').innerText = isEn ? doctorNoteEn : doctorNoteAr;
+
+            // Transmit labels for localized table headers
+            document.getElementById('diagnosticResultTitle').innerText = isEn ? "BESPOKE FORMULATION RECIPE (V4)" : "دليل الصيغة العلاجية الدقيقة والفريدة V4";
+            document.getElementById('diagnosticResultSub').innerText = isEn 
+                ? "Calculated dynamically based on real-time climate, epidermis sensors, and Baumann scores."
+                : "محسوبة جزيئياً بدقة بناءً على قياسات البيئة الحالية وهيكل باومان ثنائي كيمياء الخلايا.";
+            document.getElementById('skinTypeReportHeader').innerText = isEn ? "Clinical Skin Classification code" : "كود التصنيف الجلدي المكتشف بالأبعاد الأربعة";
+            document.getElementById('formulaMantleLabel').innerText = isEn ? "Homeostasis matching index" : "درجة مواءمة حموضة السائل المطور";
+            document.getElementById('tblColIngredient').innerText = isEn ? "ACTIVE CHEMICAL COMPOUNDS MATRIX" : "المركب الكيميائي النشط الموجه بالصيغة";
+            document.getElementById('tblColPercent').innerText = isEn ? "PERCENTAGE" : "النسبة بالوزن";
+            document.getElementById('tblColTarget').innerText = isEn ? "TARGET LEVEL BIOLOGY" : "الهدف البيولوجي والمستوى المستهدف للخلية";
+            document.getElementById('tblExclusionLabel').innerText = isEn ? "• Phenoxyethanol, Parabens & Perfumes" : "• المواد الحافظة المخرشة، فينوكسي إيتانول والعطور";
+            document.getElementById('tblExclusionRole').innerText = isEn ? "0% - STRICTLY EXCLUDED" : "0.0% مستثنى تماماً (مضاد للتقشر والحساسية)";
+            document.getElementById('clinicalInsightHeader').innerHTML = `<i class="fa-solid fa-hospital mr-1"></i> ` + (isEn ? "Specialist Clinical Laboratory & Formulation Insights" : "إرشاد التشييد المعملي والتطبيق الوصفة السريرية:");
+
+            // Toggle visibility
+            document.getElementById('generateActionArea').classList.add('hidden');
+            document.getElementById('dynamicReportContent').classList.remove('hidden');
+            
+            // Auto update buttons text on completion
+            document.getElementById('audioReminderBtn').className = "text-xs font-bold bg-blue-50 hover:bg-blue-100 border border-blue-200 text-navyRegal px-4 py-2.5 rounded-xl transition duration-300 shadow-sm flex items-center gap-2 transform active:scale-95 animate-pulse";
+            document.getElementById('audioBtnText').innerText = isEn ? "Audio Routine Reminder" : "قارئ الوصفة الصوتي المساعد";
+        }
+
+        function resetApp() {
+            // Cancel voice narration
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+            }
+
+            currentStep = 1;
+            selectedCityIndex = 0;
+            skinPH = 5.5;
+            skinMelanin = "Standard";
+            skinPorphyrins = "High";
+            baumannAnswers = [null, null, null, null];
+            currentBaumannIndex = 0;
+
+            // Reset components
+            document.getElementById('phSlider').value = 5.5;
+            document.getElementById('melaninSelect').selectedIndex = 0;
+            document.getElementById('porphyrinSelect').selectedIndex = 2;
+            bindPHValue(5.5);
+
+            document.getElementById('dynamicReportContent').classList.add('hidden');
+            document.getElementById('generateActionArea').classList.remove('hidden');
+
+            selectCity(0);
+            updateWizardUI();
+            renderBaumannQuestion();
+        }
+
+        // TEXT TO SPEECH NARRATOR
+        function narrateRoutine() {
+            if (!('speechSynthesis' in window)) {
+                alert(currentLang === 'en' ? "Your browser doesn't support speech synthesis." : "متصفحك لا يدعم القراءة الصوتية التلقائية.");
+                return;
+            }
+
+            const btn = document.getElementById('audioReminderBtn');
+            const btnText = document.getElementById('audioBtnText');
+            
+            if (window.speechSynthesis.speaking) {
+                window.speechSynthesis.cancel();
+                btn.classList.remove('bg-rose-50', 'border-rose-200', 'animate-pulse');
+                btn.classList.add('bg-blue-50', 'border-blue-200');
+                btnText.innerText = currentLang === 'en' ? 'Audio Routine Reminder' : 'قارئ الوصفة الصوتي المساعد';
+                return;
+            }
+
+            // Read exact dynamic formulation values computed
+            const hydrationScore = baumannAnswers[0] || 2;
+            const sensitivityScore = baumannAnswers[1] || 2;
+            const hyd = (hydrationScore >= 2.5) ? "Oily" : "Dry";
+            const sen = (sensitivityScore <= 2.5) ? "Sensitive" : "Resistant";
+            const currentCityName = cityData[selectedCityIndex][currentLang === 'en' ? 'nameEn' : 'nameAr'];
+
+            const textEn = `Your bespoke GlowLogic recipe for clinical skin type code, ${document.getElementById('skinTypeCode').innerText}, computed in ${currentCityName} consists of: First, Epigallocatechin Gallate at ${document.getElementById('recipeTableRows').children[0].children[1].innerText} concentration for cellular porphyrins destruction. Second, Adenosine and Tripeptide Complex at ${document.getElementById('recipeTableRows').children[1].children[1].innerText} for dermal collagen stimulation and wrinkle correction. Third, Disodium EDTA at point 2 percent as a chelation complex stabilizer. Fourth, Natural Moistering factor PCA sodium and Serine complex at ${document.getElementById('recipeTableRows').children[3].children[1].innerText} to reinforce hydration reserves. Phenoxyethanol, parabens, and perfumes have been strictly excluded at zero percent to protect your skin barrier. Doctor's insight: ${document.getElementById('clinicalInsightBody').innerText}`;
+
+            const textAr = `صيغتك العلاجية المخصصة من مختبرات غلو لوجيك برمز التصنيف الجلدي المكتشف، ${document.getElementById('skinTypeCode').innerText}، والتي تم تطويرها في مجمع ${currentCityName} الطبي تتكون مما يلي: أولاً، مستخلص الشاي الأخضر النشط بنسبة ${document.getElementById('recipeTableRows').children[0].children[1].innerText} لتبديد البورفيرين النشط. ثانياً، مركب الأدينوسين بنسبة ${document.getElementById('recipeTableRows').children[1].children[1].innerText} لتحفيز خلايا الكولاجين للتجاعيد. ثالثاً، جزءين من عشرة بالمئة إيديتات ثنائية الصوديوم لثبات التركيبة. رابعاً، مركب كابريليل مائي طبيعي بنسبة ${document.getElementById('recipeTableRows').children[3].children[1].innerText} للترطيب الفائق للأدمة. تم استبعاد مادة الفينوكسي إيتانول والمواد الكيميائية المخرشة تماماً لسلامة حاجز بشرتك. إرشادات المختبر الطبي: ${document.getElementById('clinicalInsightBody').innerText}`;
+
+            const textToSpeak = currentLang === 'en' ? textEn : textAr;
+            const utterance = new SpeechSynthesisUtterance(textToSpeak);
+            utterance.lang = currentLang === 'en' ? 'en-US' : 'ar-AE';
+            utterance.rate = 1.0;
+
+            btn.classList.remove('bg-blue-50', 'border-blue-200');
+            btn.classList.add('bg-rose-50', 'border-rose-200', 'animate-pulse');
+            btnText.innerText = currentLang === 'en' ? 'Stop Audio Narration' : 'إيقاف سرد الوصفة';
+
+            utterance.onend = function() {
+                btn.classList.remove('bg-rose-50', 'border-rose-200', 'animate-pulse');
+                btn.classList.add('bg-blue-50', 'border-blue-200');
+                btnText.innerText = currentLang === 'en' ? 'Audio Routine Reminder' : 'قارئ الوصفة الصوتي المساعد';
+            };
+
+            utterance.onerror = function() {
+                btn.classList.remove('bg-rose-50', 'border-rose-200', 'animate-pulse');
+                btn.classList.add('bg-blue-50', 'border-blue-200');
+                btnText.innerText = currentLang === 'en' ? 'Audio Routine Reminder' : 'قارئ الوصفة الصوتي المساعد';
+            };
+
+            window.speechSynthesis.speak(utterance);
+        }
+    </script>
+</body>
+</html>
